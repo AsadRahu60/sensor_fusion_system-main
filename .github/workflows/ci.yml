@@ -1,0 +1,64 @@
+name: ROS 2 CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    name: Build & Test (ROS 2 Humble)
+    runs-on: ubuntu-22.04
+    container:
+      image: osrf/ros:humble-desktop
+
+    steps:
+      # ── 1. Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: ros2_ws/src/sensor_fusion_system
+
+      # ── 2. Install system dependencies ──────────────────────────────────────
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            libeigen3-dev \
+            ros-humble-ament-cmake-gtest \
+            python3-colcon-common-extensions
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
+      # ── 3. Build ─────────────────────────────────────────────────────────────
+      - name: Build package
+        run: |
+          . /opt/ros/humble/setup.bash
+          cd ros2_ws
+          colcon build \
+            --packages-select sensor_fusion_system \
+            --cmake-args -DCMAKE_BUILD_TYPE=Release \
+            --event-handlers console_cohesion+
+
+      # ── 4. Run tests ─────────────────────────────────────────────────────────
+      - name: Run tests
+        run: |
+          . /opt/ros/humble/setup.bash
+          cd ros2_ws
+          . install/setup.bash
+          colcon test \
+            --packages-select sensor_fusion_system \
+            --event-handlers console_cohesion+
+          colcon test-result --verbose
+
+      # ── 5. Lint (ament_cpplint + ament_uncrustify) ───────────────────────────
+      - name: Lint check
+        run: |
+          . /opt/ros/humble/setup.bash
+          cd ros2_ws
+          . install/setup.bash
+          colcon test \
+            --packages-select sensor_fusion_system \
+            --cmake-target ament_lint \
+            --event-handlers console_cohesion+ || true

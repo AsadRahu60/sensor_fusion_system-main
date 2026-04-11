@@ -1,0 +1,21 @@
+# ═══════════════════════════════════════════════════════════════════════
+# FILE PURPOSE: .clang-format
+# ═══════════════════════════════════════════════════════════════════════
+#
+# WHAT IT DOES:
+# - Defines C++ code style rules
+# - Ensures consistent formatting
+#
+# HOW TO USE:
+# - clang-format -i src/**/*.cpp
+# - VSCode formats automatically if configured
+#
+# ═══════════════════════════════════════════════════════════════════════
+
+---
+BasedOnStyle: Google
+IndentWidth: 2
+ColumnLimit: 100
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false

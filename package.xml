@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>sensor_fusion_system</name>
+  <version>2.0.0</version>
+  <description>
+    Real-time Extended Kalman Filter sensor fusion system for robot pose estimation.
+    Fuses IMU (100 Hz) and LiDAR (10 Hz) data using a nonlinear EKF motion model,
+    broadcasts the estimated pose as a TF2 map→base_link transform, and monitors
+    sensor health with dropout detection.
+  </description>
+
+  <maintainer email="asadullahrahoo98@gmail.com">Asadullah Rahoo</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Core ROS 2 C++ library -->
+  <depend>rclcpp</depend>
+
+  <!-- Message / service types -->
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_srvs</depend>
+
+  <!-- TF2 — broadcasts map → base_link transform from fusion node -->
+  <depend>tf2_ros</depend>
+
+  <!-- Eigen3 — matrix operations for the EKF -->
+  <depend>eigen</depend>
+
+  <!-- Testing -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <!-- Python integration tests -->
+  <exec_depend>rclpy</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

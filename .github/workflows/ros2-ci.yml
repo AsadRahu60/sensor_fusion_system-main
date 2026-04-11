@@ -1,0 +1,63 @@
+# ═══════════════════════════════════════════════════════════════════════
+# FILE PURPOSE: .github/workflows/ros2-ci.yml
+# ═══════════════════════════════════════════════════════════════════════
+#
+# WHAT IT DOES:
+# - Runs on every git push
+# - Builds code
+# - Runs all tests
+# - Reports results
+#
+# WHY YOU NEED IT:
+# - Catches bugs before merging
+# - Ensures code always works
+# - Professional practice
+#
+# ═══════════════════════════════════════════════════════════════════════
+
+name: ROS 2 CI
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Update ROS 2 GPG Key
+        run: |
+          sudo apt-key del F42ED6FBAB17C654 || true
+          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | sudo gpg --dearmor -o /usr/share/keyrings/ros-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/ros2.list
+          
+      - name: Setup ROS 2
+        uses: ros-tooling/setup-ros@v0.6
+        with:
+          required-ros-distributions: humble
+      
+      - name: Build
+        run: |
+          mkdir -p ~/ros2_ws/src
+          cp -r . ~/ros2_ws/src/sensor_fusion_system
+          cd ~/ros2_ws
+          source /opt/ros/humble/setup.bash
+          colcon build --packages-select sensor_fusion_system
+      
+      - name: Test
+        run: |
+          cd ~/ros2_ws
+          source /opt/ros/humble/setup.bash
+          source install/setup.bash
+          colcon test --packages-select sensor_fusion_system
+          colcon test-result --verbose
+      
+      - name: Install required Python dependencies
+        run: |
+          sudo pip3 install --upgrade pip
+          sudo pip3 install rosdistro rospkg
+          sudo pip3 uninstall -y colcon_meson # Only needed for older versions
+      - name: Install required Python packages
+        run: |
+          pip3 install --upgrade pip
+          pip3 install --upgrade rosinstall-generator rosdistro rospkg colcon-meson meson

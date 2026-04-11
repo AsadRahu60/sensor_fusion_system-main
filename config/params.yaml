@@ -1,0 +1,37 @@
+# ═══════════════════════════════════════════════════════════════════════
+# FILE PURPOSE: params.yaml
+# ═══════════════════════════════════════════════════════════════════════
+#
+# WHAT IT DOES:
+# - Stores configuration parameters for all four nodes
+# - Allows changing behaviour without recompiling
+#
+# HOW TO USE:
+# - ros2 launch sensor_fusion_system sensor_fusion_system.launch.py
+#   (the launch file passes this file to every node automatically)
+#
+# Or per-node:
+# - ros2 run sensor_fusion_system imu_sensor_node \
+#     --ros-args --params-file config/params.yaml
+#
+# ═══════════════════════════════════════════════════════════════════════
+
+/imu_sensor_node:
+  ros__parameters:
+    publish_rate: 100.0   # Hz — IMU publish frequency
+    add_noise: true       # enable Gaussian noise on accelerometer & gyro
+
+/lidar_sensor_node:
+  ros__parameters:
+    scan_rate: 10.0             # Hz — scan publish frequency
+    min_angle: -3.14159265      # rad — start of scan arc
+    max_angle:  3.14159265      # rad — end of scan arc
+    angle_increment: 0.01745329 # rad — ~1 degree per ray (π/180)
+    range_min: 0.1              # m   — minimum valid range
+    range_max: 30.0             # m   — maximum valid range
+    add_noise: true             # enable Gaussian range noise
+
+/fusion_node:
+  ros__parameters:
+    prediction_rate: 50.0     # Hz  — EKF prediction step frequency
+    gravity: 9.80665          # m/s² — standard gravity for IMU compensation
