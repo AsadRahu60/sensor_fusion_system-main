@@ -37,6 +37,7 @@ jobs:
 
       # ── 3. Build ─────────────────────────────────────────────────────────────
       - name: Build package
+        shell: bash
         run: |
           . /opt/ros/humble/setup.bash
           cd ros2_ws
@@ -47,6 +48,7 @@ jobs:
 
       # ── 4. Run tests ─────────────────────────────────────────────────────────
       - name: Run tests
+        shell: bash
         run: |
           . /opt/ros/humble/setup.bash
           cd ros2_ws
