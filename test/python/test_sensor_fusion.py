@@ -1,3 +1,6 @@
+# Copyright (c) 2026 [Asadullah Rahoo]. All rights reserved.
+# Licensed under the MIT License .
+
 """
 ═══════════════════════════════════════════════════════════════════════
 FILE PURPOSE: test_sensor_fusion.py
@@ -68,7 +71,7 @@ def test_imu_publishes_data(ros_context):
         proc.terminate()
 
 def test_imu_data_valid(ros_context):
-    """Test IMU data has gravity"""
+    """Test IMU data has gravity."""
     proc = subprocess.Popen([
         'ros2', 'run', 'sensor_fusion_system', 'imu_sensor_node'
     ])
