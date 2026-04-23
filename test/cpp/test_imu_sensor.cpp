@@ -15,7 +15,7 @@
 // - Demonstrates Google Test usage
 //
 // BUG FIX: original code called rclcpp::init inside the first test and
-// rclcpp::shutdown at the end of that same test.  Moved init/shutdown 
+// rclcpp::shutdown at the end of that same test.  Moved init/shutdown
 // to a TestEnvironment so they bracket the entire suite.
 //
 // ═══════════════════════════════════════════════════════════════════════
@@ -26,16 +26,16 @@
 // Minimal Google Test stubs so editors/compilers without gtest won't error
 #ifdef __cplusplus
 namespace testing {
-inline void InitGoogleTest(int *, char **) {}
+inline void InitGoogleTest(int*, char**) {}
 class Environment {
-public:
+ public:
   virtual void SetUp() {}
   virtual void TearDown() {}
   virtual ~Environment() = default;
 };
-inline void AddGlobalTestEnvironment(Environment *) {}
-}
-#define TEST(test_suite_name, test_name) \
+inline void AddGlobalTestEnvironment(Environment*) {}
+}  // namespace testing
+#define TEST(test_suite_name, test_name)       \
   static void test_suite_name##_##test_name(); \
   static void test_suite_name##_##test_name()
 #define EXPECT_EQ(a, b) ((void)0)
@@ -51,8 +51,11 @@ inline int RUN_ALL_TESTS() { return 0; }
 #define EXPECT_GT(a, b) ((void)0)
 #define EXPECT_DOUBLE_EQ(a, b) ((void)0)
 #define RUN_ALL_TESTS() (0)
-static inline void InitGoogleTest(int *argc, char **argv) { (void)argc; (void)argv; }
-static inline void AddGlobalTestEnvironment(void *env) { (void)env; }
+static inline void InitGoogleTest(int* argc, char** argv) {
+  (void)argc;
+  (void)argv;
+}
+static inline void AddGlobalTestEnvironment(void* env) { (void)env; }
 #endif
 #endif
 
@@ -61,11 +64,14 @@ static inline void AddGlobalTestEnvironment(void *env) { (void)env; }
 #else
 #ifdef __cplusplus
 namespace rclcpp {
-inline void init(int, char **) {}
+inline void init(int, char**) {}
 inline void shutdown() {}
-}
+}  // namespace rclcpp
 #else
-static inline void rclcpp_init(int argc, char **argv) { (void)argc; (void)argv; }
+static inline void rclcpp_init(int argc, char** argv) {
+  (void)argc;
+  (void)argv;
+}
 static inline void rclcpp_shutdown(void) {}
 #endif
 #endif
@@ -78,14 +84,14 @@ static inline void rclcpp_shutdown(void) {}
 #include <string>
 using frame_id_t = std::string;
 #else
-using frame_id_t = const char *;
+using frame_id_t = const char*;
 #endif
 
 #if __has_include(<array>)
 #include <array>
 #else
 namespace std {
-template<typename T, unsigned long N>
+template <typename T, unsigned long N>
 struct array {
   T _elems[N];
   using value_type = T;
@@ -93,29 +99,46 @@ struct array {
   constexpr T* data() noexcept { return _elems; }
   constexpr const T* data() const noexcept { return _elems; }
   constexpr T& operator[](size_type i) noexcept { return _elems[i]; }
-  constexpr const T& operator[](size_type i) const noexcept { return _elems[i]; }
+  constexpr const T& operator[](size_type i) const noexcept {
+    return _elems[i];
+  }
   constexpr size_type size() const noexcept { return N; }
 };
-}
+}  // namespace std
 #endif
 
-namespace std_msgs { namespace msg {
-struct Header { frame_id_t frame_id; };
-}}
-namespace geometry_msgs { namespace msg {
-struct Vector3 { double x{0.0}, y{0.0}, z{0.0}; };
-}}
-namespace sensor_msgs { namespace msg {
+namespace std_msgs {
+namespace msg {
+struct Header {
+  frame_id_t frame_id;
+};
+}  // namespace msg
+}  // namespace std_msgs
+namespace geometry_msgs {
+namespace msg {
+struct Vector3 {
+  double x{0.0}, y{0.0}, z{0.0};
+};
+}  // namespace msg
+}  // namespace geometry_msgs
+namespace sensor_msgs {
+namespace msg {
 struct Imu {
   std_msgs::msg::Header header;
   geometry_msgs::msg::Vector3 linear_acceleration;
-  std::array<double, 9> angular_velocity_covariance{{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}};
+  std::array<double, 9> angular_velocity_covariance{
+      {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}};
 };
-}}
+}  // namespace msg
+}  // namespace sensor_msgs
 #else
-typedef const char *frame_id_t;
-typedef struct { frame_id_t frame_id; } std_msgs_msg_Header;
-typedef struct { double x, y, z; } geometry_msgs_msg_Vector3;
+typedef const char* frame_id_t;
+typedef struct {
+  frame_id_t frame_id;
+} std_msgs_msg_Header;
+typedef struct {
+  double x, y, z;
+} geometry_msgs_msg_Vector3;
 typedef struct {
   std_msgs_msg_Header header;
   geometry_msgs_msg_Vector3 linear_acceleration;
@@ -126,7 +149,7 @@ typedef struct {
 
 #ifdef __cplusplus
 class RclcppEnvironment : public ::testing::Environment {
-public:
+ public:
   void SetUp() override { rclcpp::init(0, nullptr); }
   void TearDown() override { rclcpp::shutdown(); }
 };
@@ -149,7 +172,7 @@ TEST(ImuSensorTest, CovarianceIsPositive) {
   EXPECT_DOUBLE_EQ(msg.angular_velocity_covariance[0], av);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   ::testing::AddGlobalTestEnvironment(new RclcppEnvironment());
   return RUN_ALL_TESTS();

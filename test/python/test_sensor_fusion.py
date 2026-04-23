@@ -5,7 +5,6 @@
 
 FILE PURPOSE: test_sensor_fusion.py
 
-
 WHAT IT DOES:
 - Tests complete system behavior
 - Launches nodes as subprocesses
@@ -53,7 +52,6 @@ class MessageCollector(Node):
 
 def test_imu_publishes_data(ros_context):
     """Test IMU node publishes at correct rate."""
-
     # Launch node
     proc = subprocess.Popen([
 
