@@ -1,5 +1,5 @@
 # Copyright (c) 2026 [Asadullah Rahoo]. All rights reserved.
-# Licensed under the MIT License .
+# Licensed under the MIT License.
 
 """
 ═══════════════════════════════════════════════════════════════════════
@@ -48,7 +48,7 @@ class MessageCollector(Node):
         self.messages.append(msg)
 
 def test_imu_publishes_data(ros_context):
-    """Test IMU node publishes at correct rate"""
+    """Test IMU node publishes at correct rate."""
     # Launch node
     proc = subprocess.Popen([
         'ros2', 'run', 'sensor_fusion_system', 'imu_sensor_node'
